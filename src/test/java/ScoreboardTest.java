@@ -1,6 +1,8 @@
 import com.sportradar.Match;
 import com.sportradar.Scoreboard;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,44 +19,77 @@ public class ScoreboardTest {
         scoreboard = new Scoreboard();
     }
 
-    @Test
-    void shouldStartAGameWithInitialScore() {
-        //Arrange
-        scoreboard.startGame("Mexico", "Canada");
-
-        //Act
-        List<Match> liveMatches = scoreboard.getSummary();
-
-        //Assert
-        assertEquals(1, liveMatches.size());
-        Match mexicoCanada = liveMatches.getFirst();
-        assertEquals("Mexico", mexicoCanada.homeTeam());
-        assertEquals("Canada", mexicoCanada.awayTeam());
-        assertEquals(0, mexicoCanada.homeScore());
-        assertEquals(0, mexicoCanada.awayScore());
-    }
-
-    @Test
-    void shouldStartDifferentGames() {
-        //Arrange
-        scoreboard.startGame("Mexico", "Canada");
-        scoreboard.startGame("Spain", "Brazil");
-
-        //Act
-        List<Match> summary = scoreboard.getSummary();
-
-        //Assert
-        assertEquals(2, summary.size());
-    }
-
-    @Test
-    void shouldFailToStartAGameAlreadyInProgress() {
-        //Arrange
-        scoreboard.startGame("Mexico", "Canada");
-
-        //Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> {
+    @Nested
+    @DisplayName("Tests for starting new games")
+    class StartGameTests {
+        @Test
+        void shouldStartAGameWithInitialScore() {
+            //Arrange
             scoreboard.startGame("Mexico", "Canada");
-        });
+
+            //Act
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            assertEquals(1, liveMatches.size());
+            Match mexicoCanada = liveMatches.getFirst();
+            assertEquals("Mexico", mexicoCanada.homeTeam());
+            assertEquals("Canada", mexicoCanada.awayTeam());
+            assertEquals(0, mexicoCanada.homeScore());
+            assertEquals(0, mexicoCanada.awayScore());
+        }
+
+        @Test
+        void shouldStartDifferentGames() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+            scoreboard.startGame("Spain", "Brazil");
+
+            //Act
+            List<Match> summary = scoreboard.getSummary();
+
+            //Assert
+            assertEquals(2, summary.size());
+        }
+
+        @Test
+        void shouldFailToStartAGameAlreadyInProgress() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> {
+                scoreboard.startGame("Mexico", "Canada");
+            });
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for finishing games")
+    class FinishGameTests {
+
+        @Test
+        void shouldFinishExistingGame() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act
+            scoreboard.finishGame("Mexico", "Canada");
+            List<Match> summary = scoreboard.getSummary();
+
+            //Assert
+            assertEquals(0, summary.size());
+        }
+
+        @Test
+        void shouldFailToFinishAGameNotInProgress() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> {
+                scoreboard.finishGame("Portugal", "Norway");
+            });
+        }
     }
 }
