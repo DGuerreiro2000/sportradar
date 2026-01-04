@@ -9,8 +9,11 @@ public class Scoreboard {
     private final Map<String, Match> liveMatches = new HashMap<>();
 
     public void startGame (String home, String away) {
-        Match match = new Match(home, away, 0, 0);
-        liveMatches.put(home+away, match);
+        String gameId = home+away;
+        if (liveMatches.containsKey(gameId)) {
+            throw new IllegalArgumentException("Game in progress");
+        }
+        liveMatches.put(gameId, Match.create(home, away));
     }
 
     public List<Match> getSummary () {
