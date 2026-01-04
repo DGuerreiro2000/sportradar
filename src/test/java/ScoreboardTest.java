@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScoreboardTest {
 
@@ -31,5 +32,29 @@ public class ScoreboardTest {
         assertEquals("Canada", mexicoCanada.awayTeam());
         assertEquals(0, mexicoCanada.homeScore());
         assertEquals(0, mexicoCanada.awayScore());
+    }
+
+    @Test
+    void shouldStartDifferentGames() {
+        //Arrange
+        scoreboard.startGame("Mexico", "Canada");
+        scoreboard.startGame("Spain", "Brazil");
+
+        //Act
+        List<Match> summary = scoreboard.getSummary();
+
+        //Assert
+        assertEquals(2, summary.size());
+    }
+
+    @Test
+    void shouldFailToStartAGameAlreadyInProgress() {
+        //Arrange
+        scoreboard.startGame("Mexico", "Canada");
+
+        //Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            scoreboard.startGame("Mexico", "Canada");
+        });
     }
 }
