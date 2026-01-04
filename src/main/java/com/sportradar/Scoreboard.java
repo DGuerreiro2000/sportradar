@@ -19,4 +19,12 @@ public class Scoreboard {
     public List<Match> getSummary () {
         return liveMatches.values().stream().toList();
     }
+
+    public void finishGame (String home, String away) {
+        String gameId = home+away;
+        if (!liveMatches.containsKey(gameId)) {
+            throw new IllegalArgumentException("Game not in progress");
+        }
+        liveMatches.remove(gameId);
+    }
 }
