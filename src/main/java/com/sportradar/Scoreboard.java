@@ -27,4 +27,15 @@ public class Scoreboard {
         }
         liveMatches.remove(gameId);
     }
+
+    public void updateGame (String home, String away, int homeScore, int awayScore) {
+        if (homeScore < 0 || awayScore < 0) {
+            throw new IllegalArgumentException("Scores must be positive");
+        }
+        String gameId = home+away;
+        if (!liveMatches.containsKey(gameId)) {
+            throw new IllegalArgumentException("Game not in progress");
+        }
+        liveMatches.put(gameId, new Match(home, away, homeScore, awayScore));
+    }
 }
