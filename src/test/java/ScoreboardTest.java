@@ -22,6 +22,7 @@ public class ScoreboardTest {
     @Nested
     @DisplayName("Tests for starting new games")
     class StartGameTests {
+
         @Test
         void shouldStartAGameWithInitialScore() {
             //Arrange
@@ -57,10 +58,13 @@ public class ScoreboardTest {
             //Arrange
             scoreboard.startGame("Mexico", "Canada");
 
-            //Act & Assert
+            //Act
             assertThrows(IllegalArgumentException.class, () -> {
                 scoreboard.startGame("Mexico", "Canada");
             });
+
+            //Assert
+            assertEquals(1, scoreboard.getSummary().size());
         }
     }
 
@@ -86,10 +90,84 @@ public class ScoreboardTest {
             //Arrange
             scoreboard.startGame("Mexico", "Canada");
 
-            //Act & Assert
+            //Act
             assertThrows(IllegalArgumentException.class, () -> {
                 scoreboard.finishGame("Portugal", "Norway");
             });
+
+            //Assert
+            assertEquals(1, scoreboard.getSummary().size());
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for updating the score of a game")
+    class UpdateGameTests {
+
+        @Test
+        void shouldUpdateAGameInProgressInitialScore() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act
+            scoreboard.updateGame("Mexico", "Canada", 0, 5);
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            Match mexicoCanada = liveMatches.getFirst();
+            assertEquals(0, mexicoCanada.homeScore());
+            assertEquals(5, mexicoCanada.awayScore());
+        }
+
+        @Test
+        void shouldUpdateAGameInProgressPreviousUpdate() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act
+            scoreboard.updateGame("Mexico", "Canada", 0, 5);
+            scoreboard.updateGame("Mexico", "Canada", 1, 1);
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            Match mexicoCanada = liveMatches.getFirst();
+            assertEquals(1, mexicoCanada.homeScore());
+            assertEquals(1, mexicoCanada.awayScore());
+        }
+
+        @Test
+        void shouldFailToSetATeamsScoreAsNegative() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act
+            assertThrows(IllegalArgumentException.class, () ->
+                    scoreboard.updateGame("Mexico", "Canada", 0, -5)
+            );
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            Match mexicoCanada = liveMatches.getFirst();
+            assertEquals(0, mexicoCanada.homeScore());
+            assertEquals(0, mexicoCanada.awayScore());
+        }
+
+        @Test
+        void shouldFailToUpdateAGameNotInProgress() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+
+            //Act
+            assertThrows(IllegalArgumentException.class, () ->
+                    scoreboard.updateGame("Portugal", "Norway", 1, 1)
+            );
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            assertEquals(1, liveMatches.size());
+            Match mexicoCanada = liveMatches.getFirst();
+            assertEquals(0, mexicoCanada.homeScore());
+            assertEquals(0, mexicoCanada.awayScore());
         }
     }
 }
