@@ -9,3 +9,10 @@ I considered going with a more traditional scoreboard approach that would allow 
 * Error Handling
 
 I chose to throw exceptions when attempting to update or finish a match that doesn't exist.
+
+Considerations & Future Work
+
+This library only invalidates a user from starting a game already in progress.
+It makes no effort to check if the user tries to start a game with a team that is already in a live match against another one.
+
+("TeamA vs TeamB" and "TeamB vs TeamA" at the same time is therefore allowed as it generates a different key)

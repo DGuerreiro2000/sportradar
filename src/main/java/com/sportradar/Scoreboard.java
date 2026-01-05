@@ -7,17 +7,18 @@ import java.util.Map;
 public class Scoreboard {
 
     private final Map<String, Match> liveMatches = new HashMap<>();
+    private long counter = 0;
 
     public void startGame (String home, String away) {
         String gameId = home+away;
         if (liveMatches.containsKey(gameId)) {
             throw new IllegalArgumentException("Game in progress");
         }
-        liveMatches.put(gameId, Match.create(home, away));
+        liveMatches.put(gameId, Match.create(home, away, counter++));
     }
 
     public List<Match> getSummary () {
-        return liveMatches.values().stream().toList();
+        return liveMatches.values().stream().sorted().toList();
     }
 
     public void finishGame (String home, String away) {
@@ -33,9 +34,10 @@ public class Scoreboard {
             throw new IllegalArgumentException("Scores must be positive");
         }
         String gameId = home+away;
-        if (!liveMatches.containsKey(gameId)) {
+        Match match = liveMatches.get(gameId);
+        if (match == null) {
             throw new IllegalArgumentException("Game not in progress");
         }
-        liveMatches.put(gameId, new Match(home, away, homeScore, awayScore));
+        liveMatches.put(gameId, new Match(home, away, homeScore, awayScore, match.counter()));
     }
 }

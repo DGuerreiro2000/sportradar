@@ -218,7 +218,7 @@ public class ScoreboardTest {
             Match firstGame = liveMatches.getFirst();
             assertEquals("Uruguay", firstGame.homeTeam());
             assertEquals("Italy", firstGame.awayTeam());
-            assertEquals(0, firstGame.homeScore());
+            assertEquals(6, firstGame.homeScore());
             assertEquals(6, firstGame.awayScore());
 
             Match secondGame = liveMatches.get(1);
@@ -262,7 +262,7 @@ public class ScoreboardTest {
             Match firstGame = liveMatches.getFirst();
             assertEquals("Uruguay", firstGame.homeTeam());
             assertEquals("Italy", firstGame.awayTeam());
-            assertEquals(0, firstGame.homeScore());
+            assertEquals(6, firstGame.homeScore());
             assertEquals(6, firstGame.awayScore());
 
             Match secondGame = liveMatches.get(1);
