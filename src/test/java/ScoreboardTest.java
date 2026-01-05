@@ -9,6 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScoreboardTest {
 
@@ -168,6 +169,125 @@ public class ScoreboardTest {
             Match mexicoCanada = liveMatches.getFirst();
             assertEquals(0, mexicoCanada.homeScore());
             assertEquals(0, mexicoCanada.awayScore());
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for getting the full summary of games")
+    class SummaryTests {
+
+        @Test
+        void shouldReturnGamesOrderedByTotalGoals() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+            scoreboard.updateGame("Mexico", "Canada", 0, 5);
+
+            scoreboard.startGame("Spain", "Brazil");
+            scoreboard.updateGame("Spain", "Brazil", 10, 2);
+
+            //Act
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            Match firstGame = liveMatches.getFirst();
+            assertEquals("Spain", firstGame.homeTeam());
+            assertEquals("Brazil", firstGame.awayTeam());
+            assertEquals(10, firstGame.homeScore());
+            assertEquals(2, firstGame.awayScore());
+
+            Match secondGame = liveMatches.get(1);
+            assertEquals("Mexico", secondGame.homeTeam());
+            assertEquals("Canada", secondGame.awayTeam());
+            assertEquals(0, secondGame.homeScore());
+            assertEquals(5, secondGame.awayScore());
+        }
+
+        @Test
+        void shouldReturnMostRecentGameIfTiedForGoals() {
+            //Arrange
+            scoreboard.startGame("Spain", "Brazil");
+            scoreboard.updateGame("Spain", "Brazil", 10, 2);
+
+            scoreboard.startGame("Uruguay", "Italy");
+            scoreboard.updateGame("Uruguay", "Italy", 6, 6);
+
+            //Act
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            Match firstGame = liveMatches.getFirst();
+            assertEquals("Uruguay", firstGame.homeTeam());
+            assertEquals("Italy", firstGame.awayTeam());
+            assertEquals(0, firstGame.homeScore());
+            assertEquals(6, firstGame.awayScore());
+
+            Match secondGame = liveMatches.get(1);
+            assertEquals("Spain", secondGame.homeTeam());
+            assertEquals("Brazil", secondGame.awayTeam());
+            assertEquals(10, secondGame.homeScore());
+            assertEquals(2, secondGame.awayScore());
+        }
+
+        @Test
+        void shouldReturnEmptyListIfNoLiveGames() {
+            //Act
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            assertTrue(liveMatches.isEmpty());
+        }
+
+        @Test
+        void shouldReturnFullSummary() {
+            //Arrange
+            scoreboard.startGame("Mexico", "Canada");
+            scoreboard.updateGame("Mexico", "Canada", 0, 5);
+
+            scoreboard.startGame("Spain", "Brazil");
+            scoreboard.updateGame("Spain", "Brazil", 10, 2);
+
+            scoreboard.startGame("Germany", "France");
+            scoreboard.updateGame("Germany", "France", 2, 2);
+
+            scoreboard.startGame("Uruguay", "Italy");
+            scoreboard.updateGame("Uruguay", "Italy", 6, 6);
+
+            scoreboard.startGame("Argentina", "Australia");
+            scoreboard.updateGame("Argentina", "Australia", 3, 1);
+
+            //Act
+            List<Match> liveMatches = scoreboard.getSummary();
+
+            //Assert
+            Match firstGame = liveMatches.getFirst();
+            assertEquals("Uruguay", firstGame.homeTeam());
+            assertEquals("Italy", firstGame.awayTeam());
+            assertEquals(0, firstGame.homeScore());
+            assertEquals(6, firstGame.awayScore());
+
+            Match secondGame = liveMatches.get(1);
+            assertEquals("Spain", secondGame.homeTeam());
+            assertEquals("Brazil", secondGame.awayTeam());
+            assertEquals(10, secondGame.homeScore());
+            assertEquals(2, secondGame.awayScore());
+
+            Match thirdGame = liveMatches.get(2);
+            assertEquals("Mexico", thirdGame.homeTeam());
+            assertEquals("Canada", thirdGame.awayTeam());
+            assertEquals(0, thirdGame.homeScore());
+            assertEquals(5, thirdGame.awayScore());
+
+            Match fourthGame = liveMatches.get(3);
+            assertEquals("Argentina", fourthGame.homeTeam());
+            assertEquals("Australia", fourthGame.awayTeam());
+            assertEquals(3, fourthGame.homeScore());
+            assertEquals(1, fourthGame.awayScore());
+
+            Match fifthGame = liveMatches.get(4);
+            assertEquals("Germany", fifthGame.homeTeam());
+            assertEquals("France", fifthGame.awayTeam());
+            assertEquals(2, fifthGame.homeScore());
+            assertEquals(2, fifthGame.awayScore());
         }
     }
 }
