@@ -6,6 +6,12 @@ In a real-world scenario, scores may need to be corrected due to input error or 
 
 I considered going with a more traditional scoreboard approach that would allow the user to increment/decrement the away or home teams score paired with a score log that would validate that goals besides the last one scored could not be reverted by VAR as play would have gone on but decided against it to adhere to the guidelines and avoid over-engineering.
 
+* Get Summary (Added on 06/01)
+
+An alternative option would be to use LinkedHashMap instead of the HashMap to store live games.
+This way the Match record does not need to store a counter/timestamp value to serve as a tie-breaker since we can use the functionalities of LinkedHashMap to keep a record of the order of inserts.
+The time complexity of both solutions is the same however O(N log N).
+
 * Error Handling
 
 I chose to throw exceptions when attempting to update or finish a match that doesn't exist.
